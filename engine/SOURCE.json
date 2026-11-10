@@ -2,7 +2,7 @@
   "format_version": 1,
   "transform_version": 4,
   "upstream_repo": "https://github.com/oblomovunleashed/trurl",
-  "upstream_commit": "e6fdae8885770d72247131b76f227520a5645934",
+  "upstream_commit": "3e51e22a98195b5bd57614d19979af4b23b56375",
   "planner_transform": "AST-extracted planning constants/functions through generic_profile; removed standalone installer constants and unused imports.",
   "files": {
     "LICENSE": "f4faf3200c198ba8fbd8cbaf9ec1f7676c77dd1d339dd237220a35f6be617445",

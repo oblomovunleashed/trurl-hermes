@@ -1,11 +1,14 @@
 # Hermes Trurl 0.3.1 validation
 
-Validated on **10 November 2026**, with the shared engine pinned to merged Trurl `main` commit `e6fdae8885770d72247131b76f227520a5645934`. Both repositories remain private during preparation; the plugin is not yet submitted to the catalog.
+The tagged **0.3.1** release was validated on **10 November 2026** against source commit `e6fdae8885770d72247131b76f227520a5645934`, now retained in the private [Trurl archive](https://github.com/oblomovunleashed/trurl-archive/commit/e6fdae8885770d72247131b76f227520a5645934).
+
+The current source checkout re-pins the engine to fresh Trurl `main` commit `3e51e22a98195b5bd57614d19979af4b23b56375` after the upstream history reset. The upstream source tree, generated runtime code and support resources are unchanged; only the recorded upstream commit changes. Both repositories remain private during preparation; the plugin is not yet submitted to the catalog. The tagged release and its archives remain unchanged.
 
 ## Current checks
 
-- **110 tests pass** on Python **3.13.0** in **19.199 seconds**. Packaging regressions extract the actual lean archive, register all ten native tools and generate an Atlas and a dated Sunday edition from the installed resources.
-- Full engine re-sync verification passes against a clean checkout of the merged upstream commit. Offline bundled verification also passes: **27 engine files** and **16 managed skill resources** match their recorded hashes.
+- The initial release passed **110 tests** on Python **3.13.0** in **19.199 seconds**. Packaging regressions extract the actual lean archive, register all ten native tools and generate an Atlas and a dated Sunday edition from the installed resources.
+- After the provenance re-pin, all **110 tests** passed again in **20.548 seconds** on Python **3.13.0**.
+- Full engine re-sync verification passes against a clean checkout of the fresh upstream commit. Offline bundled verification was also rerun after the re-pin: **27 engine files** and **16 managed skill resources** match their recorded hashes.
 - The explicit manifests cover **56 runtime files** and **90 reviewed source files**. The runtime archive omits repository images, screenshots, tests, maintainer scripts and Git history. Source scanning found no iCloud email addresses, personal absolute paths or private profile/demo artifacts in either manifest.
 - All **15 local README links** resolve, and all four screenshot checksums match the original captures. Screenshots retain their original capture-commit metadata and use a synthetic profile.
 - Official **Hermes 0.23.1**, tag commit `3b421578588243f920886e6fe79a6faa87ea026e`, passes `plugins validate --install-deps --json` for both the source tree and the extracted runtime bundle: **15 checks**, security **safe**, `host_ready=true`, **no warnings**. This uses Python **3.14.9** with the SDK's frozen dependency environment and isolated Hermes profiles.

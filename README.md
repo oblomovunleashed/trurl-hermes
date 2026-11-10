@@ -23,7 +23,7 @@ The screenshots show actual HTML and SVG exports from Trurl **0.3.1**, using fic
 
 ## Install
 
-Use Hermes **0.23.0 or later**, **Python 3.11–3.14** and research tools. Version **0.3.1** vendors the shared engine from Trurl's `main` commit `e6fdae8885770d72247131b76f227520a5645934`; the [bundled provenance](engine/SOURCE.json) records its source and transformations. All required helpers and resources are included.
+Use Hermes **0.23.0 or later**, **Python 3.11–3.14** and research tools. This source checkout vendors the shared engine from Trurl's fresh `main` commit `3e51e22a98195b5bd57614d19979af4b23b56375`; the [bundled provenance](engine/SOURCE.json) records its source and transformations. All required helpers and resources are included.
 
 Download **`trurl.zip`** from the [0.3.1 release](https://github.com/oblomovunleashed/trurl-hermes/releases/tag/v0.3.1). For a fresh installation, extract it into the active Hermes profile's plugins directory and enable it:
 
@@ -35,7 +35,9 @@ hermes plugins enable trurl
 
 The archive contains the `trurl/` runtime directory. Repository screenshots, artwork, tests, maintainer scripts and Git history are excluded.
 
-To build the same install archive from a source checkout, run from the repository root:
+The tagged **0.3.1** release retains its original source pin, `e6fdae8885770d72247131b76f227520a5645934`, now available in the private [Trurl archive](https://github.com/oblomovunleashed/trurl-archive/commit/e6fdae8885770d72247131b76f227520a5645934). The fresh upstream repository has identical source files with a new history; the current checkout changes engine provenance only.
+
+To build an install archive from a source checkout, run from the repository root:
 
 ```sh
 trurl_release_dir="$(mktemp -d)/trurl-release"

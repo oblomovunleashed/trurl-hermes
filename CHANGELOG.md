@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Re-pin engine provenance to the fresh Trurl repository's single `main` commit after the upstream history reset. Shared source, generated runtime code and resources are unchanged. The original **0.3.1** source pin remains available in private `trurl-archive`; the tagged release is unchanged.
+
 ## 0.3.1 — 10 November 2026
 
 - Preserve original feedback-source identity so repeated captures cannot manufacture independent evidence. Upgrade native state to schema 3 without losing feedback wording or delivery choices.
