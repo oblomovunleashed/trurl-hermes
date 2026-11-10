@@ -24,7 +24,7 @@ PRIVATE_PARTS = {
 }
 PRIVATE_NAMES = {"taste-atlas.html", "auth.json", "credentials.json", ".ds_store"}
 PRIVATE_SUFFIXES = (".pyc", ".pyo", ".jsonl", ".log", ".sqlite", ".sqlite3", ".db", ".zip", ".tar", ".gz")
-PUBLIC_DIRECTORIES = (".github", "assets", "engine", "examples", "scripts", "skills", "tests")
+PUBLIC_DIRECTORIES = (".github", "assets", "docs", "engine", "examples", "scripts", "skills", "tests")
 
 
 def _private(parts):

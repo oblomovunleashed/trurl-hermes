@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add the standalone Trurl research section and hypothesis explanation to the Hermes README, with Hermes-specific research notes and source links.
+
 - Re-pin engine provenance to the fresh Trurl repository's single `main` commit after the upstream history reset. Shared source, generated runtime code and resources are unchanged. The original **0.3.1** source pin remains available in private `trurl-archive`; the tagged release is unchanged.
 
 ## 0.3.1 — 10 November 2026

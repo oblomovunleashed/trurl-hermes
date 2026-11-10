@@ -76,6 +76,20 @@ The source panel shows the evidence for the selected relationship, with a link t
 
 </details>
 
+### How it finds new fields
+
+Trurl can suggest a field you haven’t thought to ask about. It actively reviews possible new interests after setup, when your interests or feedback change, and when broad discovery needs fresh possibilities. It looks within individual interests and across pairs of them, forming a tentative hypothesis about what else might appeal.
+
+As a hypothetical example, liking Stanisław Lem and being curious about first-contact histories in Papua New Guinea might suggest an interest in how encounters challenge our assumptions. Trurl could test that idea with [*The Falling Sky*](https://www.jstor.org/stable/j.ctv34dm7q2) by Davi Kopenawa and Bruce Albert, an account of encounters with outsiders from a Yanomami perspective in the Amazon. The proposed connection concerns the limits of understanding; whether it explains your taste remains a hypothesis.
+
+After Hermes researches recommendations, Trurl saves a small set of verified relationships between works, subjects and creators, with their sources attached. Each run records whether it added or revised facts, or found no supported changes. Here, the graph retains the book’s documented subject and authors, while the proposed connection to your enjoyment of Lem stays tentative in the taste model.
+
+When a sourced content graph is available, Trurl can also find different interests leading to the same subject. It keeps a few of these converging routes as research leads; they do not automatically increase confidence about your taste. On a broad request, it can explore one promising connection through a recommendation that fits your constraints.
+
+Feedback you choose to share helps it strengthen, narrow or reject the hypothesis and adjust what it looks for next. One enjoyed work leaves the broader idea tentative; clear confirmation or independently sourced enjoyment of distinct works can establish a supported interest. That gives future recommendations a richer starting point, with each new connection grounded in your reactions. You can inspect and correct these hypotheses at any time. [How taste hypotheses work](skills/trurl/references/taste-hypotheses.md)
+
+For broader selections, seeded variation can change the research angles and the balance of priorities, helping Trurl look beyond the same few leads. Your requested format, time limits and exclusions still apply. Focused requests stay focused.
+
 ## Sunday edition
 
 Choose your categories for one verified pick in each. The example for **Sunday, 15 November 2026** brings together Lem's satire, marketing experiments, an android's hidden life, Sichuan food history, pixel-art animation and human learning.
@@ -112,6 +126,15 @@ Shared helpers operate on short-lived private snapshots. Graphs, anchor mappings
 Version **0.3.1** upgrades native state to schema 3 while retaining feedback wording, delivered records and existing version-2 preferences and delivery choices. Generated feedback-event locations remain available as record locators, but no longer count as evidence of independent original sources. Hypotheses affected by that correction become stale and need review before they can guide new picks. Historical scoring labels are recovered only when one matching saved batch selection establishes the original scoring basis.
 
 Plugin runtime makes no direct network requests, launches no shell/background processes, and handles no credentials or telemetry. Hermes supplies research, model and scheduler capabilities under the session's permissions. Context returned by native tools is available to that session's configured model provider.
+
+## The research behind Trurl
+
+- **Broaden the search before ranking.** The agent starts with different leads, such as a museum archive for the history, a practitioner’s account or a paper on how something works. This borrows from research on getting models to propose a wider range of answers. [Verbalized Sampling](https://arxiv.org/abs/2510.01171)
+- **Use seeds to vary the search.** Research on seed prompts helped inspire this. Trurl uses code for the draws, varying research directions and, on some requests, how much weight it gives to depth or novelty. With the same inputs, you can replay those draws. [String Seed of Thought](https://arxiv.org/abs/2510.21150) · [Large Language Models Are Bad Dice Players](https://arxiv.org/abs/2601.05414)
+- **Follow connections you can check.** An optional knowledge graph gives the agent short, sourced paths between works, topics and creators. Each path gives it a lead to investigate. [Knowledge graph path reasoning](https://arxiv.org/abs/1906.05237)
+- **Keep suggestions separate from taste.** Trurl keeps a record of what it recommended separately from what you say you liked. A coverage audit can show when the same subjects or creators keep turning up. [Recommendation feedback loops](https://arxiv.org/pdf/1710.11214) · [The Basic B\*\*\* Effect](https://arxiv.org/abs/2509.02910)
+
+These studies inform the design. The notes explain what the studies tested and how to evaluate Trurl’s selections. [Research notes](docs/SCIENTIFIC_BASIS.md) · [Graph research](docs/GRAPH_RESEARCH.md)
 
 ## Local checks
 
