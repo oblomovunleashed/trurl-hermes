@@ -1,0 +1,18 @@
+TRURL FOR HERMES 0.3.1 — SUBMISSION SCREENSHOTS
+
+Captured from the frozen release at commit 125981544d5463bc8f386181770511573d7ab1b1.
+These are actual native HTML/SVG exports using a synthetic screenshot profile, not a real user’s taste model.
+The screenshots show seven fictional stated interests, one testing hypothesis, six example works and no enjoyment feedback.
+There is no recorded chat, live Hermes web-research claim, or measured-enjoyment claim.
+
+01-atlas-connections.jpg
+Native Atlas connections — synthetic example profile
+
+02-atlas-source-inspection.jpg
+Inspect the evidence behind each relationship
+
+03-atlas-interest-map.jpg
+Stated interests stay separate from tentative possibilities
+
+04-sunday-edition.jpg
+Native Sunday edition — one linked work per category

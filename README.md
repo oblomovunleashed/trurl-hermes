@@ -9,9 +9,11 @@
 Trurl turns Hermes into a personal curator for books, films, podcasts, videos, lectures and papers. Start with one curiosity or share everything you like. It keeps a private, correctable taste model across sessions and uses actual feedback to refine future picks.
 
 <p align="center">
-  <img src="assets/atlas-interests-example.svg" alt="Illustrated overview of selected approved interests and tentative possibilities" width="960">
-  <br><sub>An illustration using approved example interests. Your own Atlas stays private.</sub>
+  <img src="assets/screenshots/03-atlas-interest-map.jpg" alt="Native Taste Atlas showing stated interests and a separate tentative possibility" width="960">
+  <br><sub>The native Taste Atlas, captured with a synthetic profile. Your own Atlas stays private.</sub>
 </p>
+
+The screenshots show actual HTML and SVG exports from Trurl **0.3.1**, using fictional interests and real example works. See the [capture details](assets/screenshots/capture-metadata.json) and [captions](assets/screenshots/CAPTIONS.txt).
 
 - **Discover across themes.** Research can connect several interests through sourced relationships, with taste hypotheses kept tentative until feedback supports them.
 - **Pick up where you left off.** Interests, delivered picks, scoped reactions and graph connections stay in your private Hermes profile.
@@ -48,14 +50,26 @@ Trurl proactively checks for hypothesis maintenance after new interests, substan
 Every eligible interest is represented automatically in the graph. Sourced-route coverage is reported separately, so an isolated interest stays visible without invented links. Verified content relationships remain separate from personal preferences.
 
 <p align="center">
-  <img src="assets/atlas-connections-example.svg" alt="Illustrated sourced content paths and a separate tentative cross-theme taste hypothesis" width="960">
+  <img src="assets/screenshots/01-atlas-connections.jpg" alt="Native Atlas Connections view linking human learning and neural networks to a research paper through sourced routes" width="960">
+  <br><sub>Select a work to inspect its sourced routes from your interests.</sub>
 </p>
+
+<details>
+<summary>Inspect the source behind a connection</summary>
+
+The source panel shows the evidence for the selected relationship, with a link to the source and the date it was checked.
+
+![Native Atlas source panel with a research-paper citation and source link](assets/screenshots/02-atlas-source-inspection.jpg)
+
+</details>
 
 ## Sunday edition
 
-Choose your categories for one verified pick in each. This preview was prepared on **9 November for Sunday, 15 November 2026**, bringing together Lem's satire, marketing experiments, an android's hidden life, Sichuan food history, pixel-art animation and human learning.
+Choose your categories for one verified pick in each. The example for **Sunday, 15 November 2026** brings together Lem's satire, marketing experiments, an android's hidden life, Sichuan food history, pixel-art animation and human learning.
 
-[![Sunday edition for 15 November 2026](examples/sunday-2026-11-15/sunday-edition.svg)](examples/sunday-2026-11-15/sunday-edition.md)
+[![Native Sunday edition for 15 November 2026, captured with a synthetic profile](assets/screenshots/04-sunday-edition.jpg)](examples/sunday-2026-11-15/sunday-edition.md)
+
+Open the [linked reading list](examples/sunday-2026-11-15/sunday-edition.md) or [original SVG](examples/sunday-2026-11-15/sunday-edition.svg).
 
 Ask for an issue any time. Genuine new-profile setup includes a disclosed Sunday proposal at **8 pm local time**, with an opportunity to say “No Sundays”. Native schedule activation is verified before delivery is marked active. Existing profiles retain their choices. Every scheduled run stops before research when delivery is off.
 

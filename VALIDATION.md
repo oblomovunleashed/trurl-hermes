@@ -2,11 +2,13 @@
 
 Release preparation dated **10 November 2026**, with the shared engine pinned to Trurl commit `a63cf71900f85fefeb766c5ec051c1e22d11b697`.
 
-This package was validated locally. The standalone Hermes repository and catalog entry are not published. The results below apply to this release tree, rather than relying on earlier version receipts.
+The runtime was validated locally at initial release commit `125981544d5463bc8f386181770511573d7ab1b1`. The standalone Hermes repository is private and the catalog entry is not published. The native validation results below describe that initial release; subsequent README and screenshot additions do not change runtime code.
 
 ## Current checks
 
-The full plugin suite passes **102 tests** on **Python 3.13.0** in **18.735 seconds**. The engine/source projection check passes against the exact upstream commit above. The public-file manifest contains **81 files**; the release scan found no iCloud email addresses, personal absolute paths or historical runtime-harness references in that payload.
+At initial release, the full plugin suite passed **102 tests** on **Python 3.13.0** in **18.735 seconds**. The engine/source projection check passed against the exact upstream commit above. The initial public-file manifest contained **81 files**; the release scan found no iCloud email addresses, personal absolute paths or historical runtime-harness references in that payload.
+
+After adding the screenshots, all **102 tests** passed again in **17.486 seconds**. The current **88-file** manifest passes the release check, all local README links resolve, and the four image checksums match their original captures.
 
 The actual `hermes plugins validate <clean-candidate> --install-deps --json` command passes under official **Hermes 0.23.1**, tag commit `3b421578588243f920886e6fe79a6faa87ea026e`, on **Python 3.14.9** in an SDK environment built from its frozen dependency lock. All **15 checks pass**, the security result is **safe**, `host_ready` is true and the warning list is empty.
 
