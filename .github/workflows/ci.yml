@@ -1,0 +1,62 @@
+name: Tests and release bundles
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-package:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Check bundled engine integrity
+        run: python3 scripts/sync_engine.py --check-bundled
+
+      - name: Check reviewed source and runtime manifests
+        run: python3 scripts/package_release.py --check
+
+      - name: Run regression tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Build runtime and source archives
+        run: |
+          python3 scripts/package_release.py --output "$RUNNER_TEMP/runtime-package"
+          python3 scripts/package_release.py --kind source --output "$RUNNER_TEMP/source-package"
+
+      - name: Save checked archives
+        if: matrix.python == '3.13'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: trurl-release-bundles
+          path: |
+            ${{ runner.temp }}/runtime-package/trurl.zip
+            ${{ runner.temp }}/runtime-package/SHA256SUMS
+            ${{ runner.temp }}/source-package/trurl-source.zip
+            ${{ runner.temp }}/source-package/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14

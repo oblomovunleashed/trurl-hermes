@@ -1,4 +1,4 @@
-> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Paths and CLI examples below describe the shared upstream evidence format, not a second persistent model or this plugin's extracted planner interface. Standalone installation, root registration and other-host setup apply only to the standalone distribution. Use Hermes's verified native scheduler for delivery.
+> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Any `model/` paths below describe internal evidence formats, not files to create or edit. The native calls below replace standalone commands; pass arguments to the registered tools rather than invoking a shell. Retain one plan and its returned seeds. Use Hermes's verified native scheduler for delivery.
 
 # Adaptive scoring weights
 
@@ -6,15 +6,14 @@ Separate a person's learned taste from what they want on this occasion. `taste.a
 
 ## Generate the plan
 
-`curation.py start` makes this plan as part of its one call and saves it as `plan.json`. To make it alone, use the bundled runtime with the profile path and the actual request:
+`trurl_plan(request=...)` makes this plan as part of its one call and saves it as `plan.json`. To make it alone, use the bundled runtime with the profile path and the actual request:
 
-```sh
-python3 scripts/curation.py weights --profile /path/to/model/profile.json --request "surprise me" --context on_demand --mode surprise --scope broad
-```
+Use `trurl_plan(request=..., mode=..., scope=...)`.
+
 
 Create exactly one plan before candidate research. Use its `lane_mix` to allocate familiar, adjacent, and distant search effort, then reuse its `effective_weights` to score the resulting candidates. Retain and log this original output; generating another random plan at scoring time would break the connection between search and selection.
 
-Run this from the skill directory or resolve the script relative to `SKILL.md`, using an absolute profile path. The command is read-only. Modes are `auto`, `personal`, `surprise`, `deep`, `playful`, `perspective`, and explicitly requested `open` or `wildcard`; scope is `auto`, `broad`, or `focused`. Keep the complete plan for replay. Repeat-triggered variation can start after two prior comparable broad requests. `--fixed` preserves the supplied baseline, disabling preset changes and variation; `--mode personal` also uses the baseline. Check that weekly delivery is active before a scheduled run. For an edition requested in chat, use `on_demand`.
+Run this from the skill directory or resolve the script relative to `SKILL.md`, using an absolute profile path. The command is read-only. Modes are `auto`, `personal`, `surprise`, `deep`, `playful`, `perspective`, and explicitly requested `open` or `wildcard`; scope is `auto`, `broad`, or `focused`. Keep the complete plan for replay. Repeat-triggered variation can start after two prior comparable broad requests. `fixed=true` preserves the supplied baseline, disabling preset changes and variation; `mode="personal"` also uses the baseline. Check that weekly delivery is active before a scheduled run. For an edition requested in chat, use `on_demand`.
 
 ## Let intent change the objective
 
@@ -30,9 +29,9 @@ The host agent should interpret intent from the current request, then pass the i
 | “Challenge my thinking” / “Change my perspective” | Increase perspective change and unexpected connections. |
 | “Use my usual mix” | Use the personal baseline. |
 
-Classify scope separately from intent. A request for papers about a named subject, a specific topic, or a tightly bounded duration is focused: pass `--scope focused` to suppress unrequested exploration-mode rotation. A general invitation to find interesting material across fields is broad. `--scope auto` is conservative and treats unrecognized or constrained wording as focused. Explicit `--scope broad` should reflect the person's actual invitation to explore, not be used merely to trigger variation.
+Classify scope separately from intent. A request for papers about a named subject, a specific topic, or a tightly bounded duration is focused: pass `scope="focused"` to suppress unrequested exploration-mode rotation. A general invitation to find interesting material across fields is broad. `scope="auto"` is conservative and treats unrecognized or constrained wording as focused. Explicit `scope="broad"` should reflect the person's actual invitation to explore, not be used merely to trigger variation.
 
-An explicit mode overrides automatic inference, except that `--fixed` always preserves the supplied baseline. The CLI does not parse custom numeric weights from prose. When the person supplies exact weights, construct and log a temporary request plan with those values after valid normalization, or invoke the planner on an ephemeral profile containing them with `--fixed`. Preserve the real learned baseline separately and do not save the supplied values there unless persistence was requested. Do not randomize explicit numbers. A narrow subject, requested medium, language, duration, or exclusion remains a constraint in every mode. “Surprise me with a short film” does not authorize a book, an hour-long video, or an irrelevant low-quality recommendation.
+An explicit mode overrides automatic inference, except that `fixed=true` always preserves the supplied baseline. The CLI does not parse custom numeric weights from prose. When the person supplies exact weights, construct and log a temporary request plan with those values after valid normalization, or invoke the planner on an ephemeral profile containing them with `fixed=true`. Preserve the real learned baseline separately and do not save the supplied values there unless persistence was requested. Do not randomize explicit numbers. A narrow subject, requested medium, language, duration, or exclusion remains a constraint in every mode. “Surprise me with a short film” does not authorize a book, an hour-long video, or an irrelevant low-quality recommendation.
 
 The connected-surprise target retains personal relevance:
 

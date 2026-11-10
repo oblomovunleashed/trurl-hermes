@@ -6,7 +6,7 @@ license: MIT
 
 # Trurl for Hermes
 
-Use the native `trurl_*` tools. The active Hermes profile's SQLite database owns taste, history, feedback, content graph and completion records. Reuse that storage across sessions. Shared references explain evidence semantics; their standalone CLI/file examples are conceptual here, not another storage layout to create.
+Use the native `trurl_*` tools. The active Hermes profile's SQLite database owns taste, history, feedback, content graph and completion records. Reuse that storage across sessions. Shared references preserve evidence rules and show native tool calls. Any `model/` paths describe internal snapshots; use the tools rather than creating or editing another storage layout.
 
 ## Start with compact context
 

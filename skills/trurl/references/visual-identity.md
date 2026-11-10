@@ -1,4 +1,4 @@
-> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Paths and CLI examples below describe the shared upstream evidence format, not a second persistent model or this plugin's extracted planner interface. Standalone installation, root registration and other-host setup apply only to the standalone distribution. Use Hermes's verified native scheduler for delivery.
+> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Any `model/` paths below describe internal evidence formats, not files to create or edit. The native calls below replace standalone commands; pass arguments to the registered tools rather than invoking a shell. Retain one plan and its returned seeds. Use Hermes's verified native scheduler for delivery.
 
 # Trurl visual identity
 

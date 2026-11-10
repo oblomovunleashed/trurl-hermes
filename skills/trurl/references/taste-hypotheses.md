@@ -1,4 +1,4 @@
-> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Paths and CLI examples below describe the shared upstream evidence format, not a second persistent model or this plugin's extracted planner interface. Standalone installation, root registration and other-host setup apply only to the standalone distribution. Use Hermes's verified native scheduler for delivery.
+> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Any `model/` paths below describe internal evidence formats, not files to create or edit. The native calls below replace standalone commands; pass arguments to the registered tools rather than invoking a shell. Retain one plan and its returned seeds. Use Hermes's verified native scheduler for delivery.
 
 # Taste hypotheses
 
@@ -6,13 +6,12 @@ Use this workflow proactively after onboarding, when meaningful personal evidenc
 
 ## Check and complete maintenance
 
-After retaining the request's scoring plan, check maintenance before broad candidate research and save the returned review in the private workspace. `curation.py start` runs this check and saves a due review as `maintenance-review.json` in its working folder; the command below runs it alone.
+After retaining the request’s `plan_id`, check maintenance before broad research. `trurl_plan` reports a due review; obtain and retain the exact review with the native call below. Internal completion records remain in SQLite.
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses maintenance-plan --root <curation-root> --plan <request-plan.json>
-```
+Use `trurl_hypotheses(action="maintenance-plan", plan_id=...)`.
 
-For onboarding or newly recorded interests/feedback outside a broad selection, use `--event onboarding` or `--event feedback` instead of `--plan`. A focused or wildcard selection needs no broad maintenance review, and a profile without a substantive original anchor has nothing to infer from yet.
+
+For onboarding or newly recorded interests/feedback outside a broad selection, use `event="onboarding"` or `event="feedback"` instead of `plan_id`. A focused or wildcard selection needs no broad maintenance review, and a profile without a substantive original anchor has nothing to infer from yet.
 
 The helper triggers the first review, an invalid completion record, changed original interests or their provenance, meaningful sourced user feedback, changed hypotheses, or a pool with fewer than two untried testing hypotheses after a delivered probe. It remembers the evidence reviewed. An unchanged sparse pool, including a decision that no useful proposal exists, does not repeatedly trigger generation. Ordinary delivery and consumption are not feedback; delivered `hypothesis_id` values only identify opportunities already used.
 
@@ -20,9 +19,8 @@ When `review_due` is true, use its compact anchor suggestions as pointers to the
 
 Record one outcome against the saved review:
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses maintenance-complete --root <curation-root> --review <private-review.json> --outcome saved --hypothesis-id <saved-id> --reason "A specific connection grounded in the reviewed interests."
-```
+Use `trurl_hypotheses(action="maintenance-complete", review=..., outcome=..., reason=..., hypothesis_ids=...)`.
+
 
 Use `saved` to identify one actual new or revised persisted hypothesis. A review may create at most one new hypothesis; reconciling evidence or retiring an older explanation may also revise existing records. Use `reviewed` with current testing hypothesis IDs when the existing pool remains useful, or `no_proposal` with a short concrete reason when no defensible proposal emerges. These alternatives complete the review without manufacturing new interests. Keep the completion rationale concise; the original anchors and hypothesis records hold the detailed reasoning.
 
@@ -30,11 +28,10 @@ The helper rejects a stale review if relevant original evidence changed while it
 
 Before delivery, check the record against the same request plan:
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses maintenance-check --root <curation-root> --plan <request-plan.json>
-```
+Use `trurl_hypotheses(action="maintenance-check", plan_id=...)`.
 
-The check exits unsuccessfully when an eligible review is pending. Always pass `--root <curation-root>` to `explore` and `select`. Newly generated broad, non-wildcard plans require it. Those commands check maintenance before eligible broad research and selection. Retain their compact checked result in the batch trace, including a reused current completion. If a helper or persistent storage is unavailable, record a pending review and the concrete limitation, then follow the manual-selection fallback with that method limit disclosed. Do not label it completed.
+
+A pending or stale review blocks eligible broad discovery and selection. Complete it and resume `trurl_plan` with the same `plan_id` only; do not redraw seeds. Retain the checked result with the batch. If persistent tools are unavailable, disclose the limitation and keep the review pending rather than labelling it completed.
 
 Maintenance runs within the current invocation, including an existing authorized scheduled run. It creates no new schedule, requests no additional sources, and requires no separate model call. The helper emits at most two compact anchor suggestions when review is due. The host creates at most one new hypothesis per review, the existing cap of eight testing hypotheses remains, and exploration uses the existing adjacent allowance.
 
@@ -50,21 +47,19 @@ Use actual original interest IDs. Keep hypothetical examples and reference-only 
 
 Capture a snapshot before writing the draft.
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses snapshot --root <curation-root>
-```
+Use `trurl_hypotheses(action="snapshot")`.
+
 
 Keep its `schema_version` and `sources`, and edit its `taste_hypotheses` list. Preserve existing records and evidence. Save the draft in the private workspace and apply it with the helper.
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses save --root <curation-root> --draft <private-draft.json>
-```
+Use `trurl_hypotheses(action="save", draft=...)`.
+
 
 If sources have changed, read them and take a new snapshot before revising the draft. The helper writes the profile atomically and preserves unrelated fields. A changed profile invalidates an earlier curator’s brief; recheck and refresh it before using its prose for selection. Remove temporary drafts after saving.
 
 ## Explore through useful picks
 
-On a broad request, `explore` can use one existing adjacent research slot for an active hypothesis. It prefers active hypotheses that have not yet had a delivered probe, then uses its seed to vary the choice. It keeps the primary `interest_evidence` and may add one compact `supporting_interest`. The nested `taste_hypothesis` contains an excerpt, up to two selected anchor IDs, the total anchor count and checked evidence-summary flags; it omits raw feedback and hashes. Read the original records by ID, including omitted origins or rationale, before assessing fit. More anchors do not raise preference confidence.
+On a broad request, `trurl_plan` can use one existing adjacent research slot for an active hypothesis. It prefers active hypotheses that have not yet had a delivered probe, then uses its seed to vary the choice. It keeps the primary `interest_evidence` and may add one compact `supporting_interest`. The nested `taste_hypothesis` contains an excerpt, up to two selected anchor IDs, the total anchor count and checked evidence-summary flags; it omits raw feedback and hashes. Read the original records by ID, including omitted origins or rationale, before assessing fit. More anchors do not raise preference confidence.
 
 With no active hypothesis, rooted discovery respects the completed maintenance outcome and keeps the original single-interest direction. Legacy or low-level discovery without a checked receipt may instead carry `hypothesis_action="propose"` and two eligible original interests; this is a research prompt, not a saved preference or a completed review. Do not restart an unchanged no-proposal decision. If genuinely new personal evidence emerges during research, obtain a current review before saving a new proposal. Retain an actual original anchor in `personal_connection` and carry the saved `hypothesis_id` through candidates and delivered records. No extra brief or recommendation is added.
 
@@ -94,9 +89,8 @@ Enjoying a work that connects several themes does not confirm every interpretati
 
 Before using the curator's brief, reconcile current hypothesis evidence.
 
-```sh
-python3 <skill-directory>/scripts/curation.py hypotheses refresh --root <curation-root>
-```
+Use `trurl_hypotheses(action="refresh")`.
+
 
 Changed or missing evidence makes dependent inferences stale and removes their managed interests from active discovery. Review the corrected source before rebuilding a proposal. The profile change invalidates an older brief through its existing freshness checks. Explicitly retired and rejected hypotheses stay out of discovery.
 

@@ -1,21 +1,13 @@
-> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Paths and CLI examples below describe the shared upstream evidence format, not a second persistent model or this plugin's extracted planner interface. Standalone installation, root registration and other-host setup apply only to the standalone distribution. Use Hermes's verified native scheduler for delivery.
+> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Any `model/` paths below describe internal evidence formats, not files to create or edit. The native calls below replace standalone commands; pass arguments to the registered tools rather than invoking a shell. Retain one plan and its returned seeds. Use Hermes's verified native scheduler for delivery.
 
 # Comfortable first use
 
 Start with categories and whatever context the person wants to share. Give value quickly; do not require introspection, ratings, a quiz, account imports, or a fixed number of examples.
 An existing useful profile is enough to begin. Missing `onboarding` fields do not justify restarting onboarding or asking again about a recorded source choice.
 
-## Choose a lasting home
+## Use the active Hermes profile
 
-Resolve the root with `python3 <skill-directory>/scripts/curation.py root` before setup. Use an explicitly chosen location or an existing accessible model. Otherwise use the local default `~/Trurl`, with the profile and ledgers in its `model/` folder. Create it with `python3 <skill-directory>/scripts/curation.py init --root <resolved-root>`. For a custom location the person wants to reuse, run `python3 <skill-directory>/scripts/curation.py use --root <existing-root>` after initialization. This remembers its path for later sessions that share the same user configuration.
-
-Confirm that the location is on persistent storage available to this host. App-created session directories, temporary containers and disposable worktrees need a durable alternative. On a sandboxed or remote host, use a shared folder that survives the session and report its actual path. If access requires a folder selection or permission, obtain that access before claiming the profile has been saved durably. A local folder is reusable by other sessions and agents that can access the same filesystem.
-
-If a remembered model is missing or inaccessible, resolve its location or access before starting another model. A changed working directory or a fresh session alone is no reason to restart.
-
-For an existing model in a session directory, identify its exact root and a durable destination. Copy the complete `model/` and any referenced local evidence, verify the copy, then remember the destination and use it for subsequent requests. Preserve relative source paths and refresh derived records if references change. Coordinate the transfer with active writers, and update any existing scheduled job's root through the host scheduler. Deletion of the original is a separate user choice.
-
-Deletion instructions must name the actual data folder and distinguish it from the installed skill and the host's chat history. Describe session deletion effects only after checking the host and storage location.
+Call `trurl_context(action="prepare")` and report its persistent SQLite location. Sessions reuse the active profile; do not register a standalone root, copy a file-based model, or import another profile without an explicit request. Use `trurl_taste` for supplied setup inputs.
 
 ## One compact invitation
 
@@ -23,11 +15,11 @@ If the person has already told you what they want, use it. Otherwise start with 
 
 > Let’s build your taste profile so I can draw on what you like each time you ask for picks. Start with one thing, like “Books and podcasts about how cities change,” or dictate whatever comes to mind. You can see and correct the profile as we go.
 >
-> I’ll keep it in `~/Trurl/model` so you can use it across sessions.
+> I’ll keep it in the active Hermes profile’s private SQLite database so you can use it across sessions.
 >
 > I’ll also set up a Sunday edition at 8 pm local time. Each one runs as an ordinary request on your plan. Say “one-off only” to skip weekly delivery.
 
-Replace the location with the actual selected path, using a readable home-relative form when appropriate. Include the storage line once during setup, after confirming that the host can use that persistent location.
+Report the actual persistent database location returned by the native tool. Include the storage line once during setup, after confirming that the host can use that persistent location.
 
 Use the Sunday line only for eligible new onboarding on a host with a native scheduler. Use the person's stated time if they give one. If their local timezone is still unknown, leave out the exact time and resolve it before scheduling. If scheduling is unavailable, say they can ask for an edition any time.
 

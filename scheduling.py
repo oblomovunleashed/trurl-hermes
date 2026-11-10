@@ -217,7 +217,7 @@ def schedule_tool(args, state, data_dir, scheduler=None):
             weekly.update(time=clock, timezone=name, requires_timezone=False, onboarding_notice=notice)
             result = _result(weekly, native)
             result.update(notice_issued=True, notice_id=notice["id"],
-                          message=f"Sunday editions are included at {clock} ({name}) where Hermes can schedule them. Say ‘No Sundays’ to skip them. A schedule will be set up only after you continue profile setup.",
+                          message=f"Sunday editions are included at {clock} ({name}) where Hermes can schedule them. Each edition runs as an ordinary request on your plan, using your current preferences. Say ‘one-off only’ to skip weekly delivery. A schedule will be set up only after you continue profile setup.",
                           native_schedule={"schedule": f"{int(clock[3:])} {int(clock[:2])} * * 0",
                                            "timezone": name, "name": "Trurl Sunday edition", "skills": ["trurl:trurl"]})
     elif action == "confirm":

@@ -2,7 +2,7 @@
 
 On-demand editions work independently. Existing delivery choices stay unchanged; installing/updating the plugin or requesting an issue is not enrollment.
 
-During genuine new-profile setup, call `trurl_schedule(action="notice")` and present its proposed Sunday edition at 20:00 local time and “No Sundays” option. Give the person a chance to opt out in their next setup reply. If everything was supplied at once, give a useful selection and the notice first. A reply solely about memory or past chats does not continue schedule enrollment.
+During genuine new-profile setup, call `trurl_schedule(action="notice")` and present its proposed Sunday edition at 20:00 local time. Explain that each edition runs as an ordinary request on the person's plan, using their current preferences, and that “one-off only” skips weekly delivery. Give the person a chance to opt out in their next setup reply. If everything was supplied at once, give a useful selection and the notice first. A reply solely about memory or past chats does not continue schedule enrollment.
 
 After disclosed setup continues without opting out, or an explicit scheduling request, inspect native jobs. Preserve paused jobs until resumption is requested. Use Hermes's scheduler to create/resume the matching task, then `trurl_schedule(action="confirm")` with the real job ID, timezone and authorization evidence. The plugin verifies an active job; `weekly_enabled=true` is rejected. Ask for timezone only when unavailable, and distinguish proposed from user-confirmed time.
 

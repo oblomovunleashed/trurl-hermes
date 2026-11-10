@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/trurl-constructor.png" alt="Trurl, the robot constructor, above the TRURL wordmark" width="320">
+  <img src="assets/trurl-constructor.webp" alt="Trurl, the robot constructor, above the TRURL wordmark" width="320">
 </p>
 
 # Trurl for Hermes
@@ -23,15 +23,26 @@ The screenshots show actual HTML and SVG exports from Trurl **0.3.1**, using fic
 
 ## Install
 
-Use Hermes **0.23.0 or later** with research tools available. Version **0.3.1** bundles the shared engine pinned to the [Trurl repository](https://github.com/oblomovunleashed/trurl), commit `a63cf71900f85fefeb766c5ec051c1e22d11b697`. The required runtime helpers and resources are included, so installation does not require access to the upstream repository.
+Use Hermes **0.23.0 or later**, **Python 3.11–3.14** and research tools. Version **0.3.1** vendors the shared engine from Trurl's `main` commit `e6fdae8885770d72247131b76f227520a5645934`; the [bundled provenance](engine/SOURCE.json) records its source and transformations. All required helpers and resources are included.
 
-For a fresh installation, copy this folder containing `plugin.yaml` into the active Hermes profile's `plugins/trurl` directory, then enable it:
+Download **`trurl.zip`** from the [0.3.1 release](https://github.com/oblomovunleashed/trurl-hermes/releases/tag/v0.3.1). For a fresh installation, extract it into the active Hermes profile's plugins directory and enable it:
 
 ```sh
 mkdir -p "${HERMES_HOME:-$HOME/.hermes}/plugins"
-cp -R /absolute/path/to/trurl-hermes "${HERMES_HOME:-$HOME/.hermes}/plugins/trurl"
+unzip /absolute/path/to/trurl.zip -d "${HERMES_HOME:-$HOME/.hermes}/plugins"
 hermes plugins enable trurl
 ```
+
+The archive contains the `trurl/` runtime directory. Repository screenshots, artwork, tests, maintainer scripts and Git history are excluded.
+
+To build the same install archive from a source checkout, run from the repository root:
+
+```sh
+trurl_release_dir="$(mktemp -d)/trurl-release"
+python3 scripts/package_release.py --output "$trurl_release_dir"
+```
+
+Use the resulting `$trurl_release_dir/trurl.zip`. The runtime allowlist is [release-files.json](release-files.json); [source-files.json](source-files.json) separately covers the full reviewed repository. Maintainers can export that complete source with `--kind source`.
 
 Preserve an existing profile's plugin data when updating. Start a new Hermes session and load the bundled skill as `trurl:trurl`, or ask Hermes to use Trurl.
 
@@ -71,7 +82,7 @@ Choose your categories for one verified pick in each. The example for **Sunday, 
 
 Open the [linked reading list](examples/sunday-2026-11-15/sunday-edition.md) or [original SVG](examples/sunday-2026-11-15/sunday-edition.svg).
 
-Ask for an issue any time. Genuine new-profile setup includes a disclosed Sunday proposal at **8 pm local time**, with an opportunity to say “No Sundays”. Native schedule activation is verified before delivery is marked active. Existing profiles retain their choices. Every scheduled run stops before research when delivery is off.
+Ask for an issue any time. Each edition uses your current plan and preferences, including categories, time budget and discovery settings. Genuine new-profile setup includes a disclosed Sunday proposal at **8 pm local time**, with an opportunity to say “one-off only”. Native schedule activation is verified before delivery is marked active. Existing profiles retain their choices. Every scheduled run stops before research when delivery is off.
 
 ## Native tools
 
@@ -104,6 +115,8 @@ Plugin runtime makes no direct network requests, launches no shell/background pr
 
 ```sh
 python3 -m unittest discover -s tests -v
+python3 scripts/package_release.py --check
+python3 scripts/sync_engine.py --check-bundled
 python3 scripts/sync_engine.py --source /path/to/trurl --check
 hermes plugins doctor . --ci
 hermes plugins validate . --install-deps
@@ -111,6 +124,10 @@ hermes plugins validate . --install-deps
 
 See [validation results](VALIDATION.md) for exact scope. Tests use synthetic state and isolated profiles. Doctor checks native loading and registration; `validate --install-deps` is the separate catalog admission check. These checks do not establish recommendation enjoyment or live scheduled delivery.
 
+GitHub Actions runs the tests, bundled integrity checks and both archive builds on Python **3.11, 3.12, 3.13 and 3.14**. Full upstream re-sync verification additionally needs a clean checkout at the recorded commit; CI's bundled check works without access to the private upstream repository.
+
+The repository remains private during preparation. Catalog submission requires this plugin repository to become publicly cloneable at the reviewed commit. Its vendored engine is included here, so users do not need access to the separate Trurl repository.
+
 The maintainer-only sync script invokes local Git and writes deterministic engine/support projections during release preparation. It records the upstream commit and source hashes, performs no download, is not loaded by Hermes and accesses no private taste state. The installed plugin has no self-updater; catalog updates use reviewed SHA-bump PRs and Hermes's native plugin update command.
 
-[Hermes plugin development](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins) · [Catalog submission](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins/catalog-submission)
+[Changelog](CHANGELOG.md) · [Hermes plugin development](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins) · [Catalog submission](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins/catalog-submission)

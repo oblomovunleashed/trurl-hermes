@@ -1,10 +1,13 @@
 """Check the explicit submission boundary using isolated synthetic sources."""
 
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import runpy
+import sys
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 import unittest
 from zipfile import ZipFile
 
@@ -26,8 +29,11 @@ class ReleaseTests(unittest.TestCase):
         self.manifest()
 
     def manifest(self, names=None):
+        names = self.names if names is None else names
         (self.root / "release-files.json").write_text(
-            json.dumps({"format_version": 1, "files": self.names if names is None else names}))
+            json.dumps({"format_version": 1, "files": names}))
+        (self.root / "source-files.json").write_text(
+            json.dumps({"format_version": 1, "files": sorted(set(names) | {"source-files.json"})}))
 
     def test_only_reviewed_payload_is_exported_without_git_or_private_runtime_data(self):
         for name in [".git/config", "model/profile.json", "profile/trurl.sqlite3", "runtime/demo.py",
@@ -75,13 +81,15 @@ class ReleaseTests(unittest.TestCase):
                     EXPORT["package"](self.root, self.base / "export")
         self.manifest(self.names + ["plugin.yaml"])
         with self.assertRaisesRegex(ValueError, "Duplicate"):
-            EXPORT["public_files"](self.root)
+            EXPORT["release_files"](self.root)
         self.manifest(["plugin.yaml"])
+        (self.root / "source-files.json").write_text(
+            json.dumps({"format_version": 1, "files": ["plugin.yaml"]}))
         with self.assertRaisesRegex(ValueError, "include itself"):
             EXPORT["public_files"](self.root)
         self.manifest()
         (self.root / "new_module.py").write_text("# Needs review before publication\n")
-        with self.assertRaisesRegex(ValueError, "missing from release manifest.*new_module.py"):
+        with self.assertRaisesRegex(ValueError, "missing from source manifest.*new_module.py"):
             EXPORT["check_source"](self.root)
         self.assertFalse((self.base / "export").exists())
 
@@ -125,6 +133,100 @@ class ReleaseTests(unittest.TestCase):
         self.assertIn("tests/test_release.py", files)
         self.assertIn("assets/trurl-constructor.png", files)
         self.assertIn("engine/SOURCE.json", files)
+
+    def test_runtime_cannot_include_repository_material_even_if_source_reviewed(self):
+        for name in ["tests/test_plugin.py", "scripts/maintainer.py", "assets/screenshot.jpg",
+                     ".github/workflows/ci.yml", "README.md", "source-files.json"]:
+            with self.subTest(name=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("reviewed repository content")
+                self.manifest(self.names + [name])
+                with self.assertRaisesRegex(ValueError, "Repository-only"):
+                    EXPORT["release_files"](self.root)
+
+    def test_runtime_must_also_be_reviewed_in_source_boundary(self):
+        (self.root / "extra.py").write_text("# Synthetic runtime module\n")
+        (self.root / "release-files.json").write_text(
+            json.dumps({"format_version": 1, "files": self.names + ["extra.py"]}))
+        with self.assertRaisesRegex(ValueError, "Runtime file missing from source manifest"):
+            EXPORT["release_files"](self.root)
+
+    def test_complete_source_archive_is_explicit_and_not_the_install_default(self):
+        (self.root / "README.md").write_text("# Synthetic source documentation\n")
+        (self.root / "source-files.json").write_text(
+            json.dumps({"format_version": 1,
+                        "files": self.names + ["source-files.json", "README.md"]}))
+        runtime = EXPORT["package"](self.root, self.base / "runtime-export")
+        source = EXPORT["package"](self.root, self.base / "source-export", kind="source")
+        self.assertEqual(Path(runtime["archive"]).name, "trurl.zip")
+        self.assertEqual(Path(source["archive"]).name, "trurl-source.zip")
+        with ZipFile(runtime["archive"]) as archive:
+            self.assertNotIn("trurl/README.md", archive.namelist())
+            self.assertNotIn("trurl/source-files.json", archive.namelist())
+        with ZipFile(source["archive"]) as archive:
+            self.assertIn("trurl/README.md", archive.namelist())
+            self.assertIn("trurl/source-files.json", archive.namelist())
+
+    def test_real_runtime_archive_loads_tools_and_renders_atlas_and_sunday_resources(self):
+        result = EXPORT["package"](ROOT, self.base / "runtime-export")
+        installed = self.base / "plugins"
+        with ZipFile(result["archive"]) as archive:
+            names = archive.namelist()
+            self.assertFalse(any(name.startswith(("trurl/assets/", "trurl/tests/", "trurl/scripts/",
+                                                 "trurl/.github/", "trurl/.git/", "trurl/examples/"))
+                                 for name in names))
+            self.assertNotIn("trurl/README.md", names)
+            archive.extractall(installed)
+        runtime = (installed / "trurl").resolve()
+        package_name = "trurl_release_installed_test"
+        self.addCleanup(lambda: [sys.modules.pop(name, None) for name in list(sys.modules)
+                                 if name == package_name or name.startswith(package_name + ".")])
+        spec = importlib.util.spec_from_file_location(
+            package_name, runtime / "__init__.py", submodule_search_locations=[str(runtime)])
+        plugin = importlib.util.module_from_spec(spec)
+        sys.modules[package_name] = plugin
+        spec.loader.exec_module(plugin)
+        tools, skills = {}, []
+        ctx = SimpleNamespace(
+            state=SimpleNamespace(data_dir=self.base / "profile"),
+            register_tool=lambda **tool: tools.update({tool["name"]: tool["handler"]}),
+            register_skill=lambda name, path, **kwargs: skills.append(Path(path)),
+        )
+        plugin.register(ctx)
+        self.assertEqual(len(tools), 10)
+        self.assertTrue(all(path.is_file() and runtime in path.parents for path in skills))
+        self.assertFalse(ctx.state.data_dir.exists())
+
+        def call(name, **args):
+            response = json.loads(tools[name](args))
+            self.assertNotIn("error", response, response)
+            return response
+
+        call("trurl_taste", interests=["Synthetic river history"], categories=["book"],
+             brain_dump="An isolated release-packaging regression fixture.")
+        atlas = call("trurl_atlas")
+        self.assertTrue(Path(atlas["output"]).is_file())
+        self.assertIn("Synthetic river history", Path(atlas["output"]).read_text())
+        plan = call("trurl_plan", request="A book about river history", mode="personal",
+                    scope="focused", categories=["book"], edition_date="2026-11-15")
+        candidate = {
+            "id": "synthetic-river-book", "title": "Synthetic river book", "creator": "Fixture Author",
+            "canonical_url": "https://example.org/river-book", "medium": "book", "lane": "familiar",
+            "topics": ["river history"],
+            "scores": dict.fromkeys(("depth", "novelty", "relevance", "surprise",
+                                      "perspective_change", "entertainment"), 4),
+            "credibility_passed": True, "constraints_passed": True,
+            "verification": {"checked_at": "2026-11-10", "urls": ["https://example.org/river-book"]},
+            "description": "Synthetic release fixture, not a real recommendation.",
+        }
+        review = call("trurl_graph", action="plan", plan_id=plan["plan_id"], candidates=[candidate])
+        if review["review_due"]:
+            call("trurl_graph", action="complete", plan_id=plan["plan_id"], candidates=[candidate],
+                 review=review, reason="Fixture metadata supports no factual content relationships.")
+        edition = call("trurl_select", plan_id=plan["plan_id"], candidates=[candidate], commit=True)
+        self.assertTrue(Path(edition["edition_files"]["svg"]).is_file())
+        self.assertIn("Synthetic river book", Path(edition["edition_files"]["svg"]).read_text())
 
 
 if __name__ == "__main__":

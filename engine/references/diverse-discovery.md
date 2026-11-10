@@ -1,4 +1,4 @@
-> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Paths and CLI examples below describe the shared upstream evidence format, not a second persistent model or this plugin's extracted planner interface. Standalone installation, root registration and other-host setup apply only to the standalone distribution. Use Hermes's verified native scheduler for delivery.
+> Hermes adapter: use this plugin's native `trurl_*` tools and its storage bridge. SQLite in the active Hermes profile remains authoritative; the bridge creates and removes file snapshots internally. Any `model/` paths below describe internal evidence formats, not files to create or edit. The native calls below replace standalone commands; pass arguments to the registered tools rather than invoking a shell. Retain one plan and its returned seeds. Use Hermes's verified native scheduler for delivery.
 
 # Broaden the pool, then select the collection
 
@@ -6,17 +6,16 @@ Changing scoring weights cannot recover a work that never enters the candidate p
 
 ## Before candidate generation
 
-`curation.py start` does these steps for a rooted request: it makes the plan once, checks hypothesis maintenance and returns the briefs below. To run them separately, create the usual weight plan exactly once. Check [hypothesis maintenance](taste-hypotheses.md#check-and-complete-maintenance) with that plan and complete any due review before candidate research. Then call the bundled helper using the retained plan and the current profile:
+`trurl_plan(request=...)` does these steps for a rooted request: it makes the plan once, checks hypothesis maintenance and returns the briefs below. To run them separately, create the usual weight plan exactly once. Check [hypothesis maintenance](taste-hypotheses.md#check-and-complete-maintenance) with that plan and complete any due review before candidate research. Then call the bundled helper using the retained plan and the current profile:
 
-```sh
-python3 scripts/diversity.py explore --root /path/to/curation --plan /path/to/weight-plan.json --profile /path/to/curation/model/profile.json --history /path/to/curation/model/recommendations.jsonl --seed 1701 --count 5
-```
+Use `trurl_plan(plan_id=...)`.
 
-Resolve paths relative to the installed skill. The pure discovery helper is read-only. Rooted `explore` first synchronises private interest mappings and isolated anchor nodes, then uses the local graph automatically unless a separate graph is supplied. For a normal run, omit a fixed seed to obtain actual external randomness and retain the returned seed. Keep this seed separate from weight variation. The supplied registry is a small, editable editorial pool, not an unbiased representation of every field of knowledge.
+
+The native planner synchronizes private interest mappings and isolated graph anchors, then returns plan-driven discovery using the active profile’s graph and history. It generates and retains separate weight, discovery and selection seeds. Resume by `plan_id` rather than drawing again. The registry is a small editorial pool, not an unbiased representation of every field.
 
 For broad discovery, use different approaches and source families rather than five rephrasings of one popular query. Connected surprise starts from explicit or evidenced tentative interests, or a concrete current-request detail. Preserve each anchor's actual kind, confidence, knowledge uncertainty, and provenance. Its briefs develop the anchored subject and a limited neighboring exploration; they do not draw unrelated catalog fields. If bare surprise has no usable context, the plan reports insufficient context so the host can obtain one interest or goal rather than invent fit. Focused requests remain inside their subject and constraints.
 
-With [taste hypotheses](taste-hypotheses.md), `explore` checks feedback and recommendation evidence and can place one active hypothesis in an existing adjacent slot on a broad request, carrying a primary interest and at most one compact supporting interest. It prefers active hypotheses without a delivered probe. With no active hypothesis, rooted discovery keeps the ordinary anchored direction after the completed review; it does not repeat an unchanged no-proposal decision. Read original context by ID; a compact excerpt or a sampled pair does not establish fit. With `--root`, the CLI checks the current completion record and requires profile and ledger paths from that same root. It reads those ledgers by default. New broad, non-wildcard plans require the root; retain the returned `hypothesis_maintenance` result with the batch trace. Python callers supply both ledgers to validate supported interests. Retain the saved `hypothesis_id` on candidates, use lane `adjacent`, and ground `personal_connection` in an original anchor. The selector allows at most one hypothesis pick, with the normal connected-fit checks. Focused requests and wildcard mode use their existing discovery behavior.
+With [taste hypotheses](taste-hypotheses.md), `trurl_plan` checks feedback and recommendation evidence and can place one active hypothesis in an existing adjacent slot on a broad request, carrying a primary interest and at most one compact supporting interest. It prefers active hypotheses without a delivered probe. With no active hypothesis, rooted discovery keeps the ordinary anchored direction after the completed review; it does not repeat an unchanged no-proposal decision. Read original context by ID; a compact excerpt or a sampled pair does not establish fit. Retain the saved `hypothesis_id` on candidates, use lane `adjacent`, and ground `personal_connection` in an original anchor. The selector allows at most one hypothesis pick, with the normal connected-fit checks. Focused requests and wildcard mode use their existing discovery behavior.
 
 Other modes may permit distant fields. A fully unrelated `wildcard` needs explicit user intent and is never chosen automatically. Different subject matter, obscurity, or unsettling content is not itself a reason to recommend something.
 
@@ -26,14 +25,13 @@ Exact label exclusions do not guarantee semantic distance. Check the drawn field
 
 ## Use a sourced graph frontier
 
-When a content graph is available, add `--graph /path/to/model/graph.json` to `explore`, or inspect its routes with:
+The native planner uses the current content graph automatically. Inspect bounded records with the graph tool, and retain the routes returned by the existing plan:
 
-```sh
-python3 scripts/curation.py graph-check --graph /path/to/model/graph.json
-python3 scripts/curation.py frontier --graph /path/to/model/graph.json --profile /path/to/model/profile.json --seed 1701 --count 5
-```
+Use `trurl_graph(action="records", kind="edges")`.
+Use `trurl_plan(plan_id=...)`.
 
-Read [knowledge graph and interest discovery](knowledge-graph.md) before maintaining graph facts or using optional `--allow-open --open-count 1`. Keep content relationships separate from personal evidence. Retain short, verified paths; a two-link relation is a route to investigate, not a direct fact or a transferred preference. A missing or invalid graph must not erase existing interests or create a reason to invent connections. Focused requests remain inside their exact scope even when a graph is supplied.
+
+Read [knowledge graph and interest discovery](knowledge-graph.md) before maintaining graph facts or using optional `mode="open"`. Keep content relationships separate from personal evidence. Retain short, verified paths; a two-link relation is a route to investigate, not a direct fact or a transferred preference. A missing or invalid graph must not erase existing interests or create a reason to invent connections. Focused requests remain inside their exact scope even when a graph is supplied.
 
 An optional compact `converging_route` shows another interest reaching the same destination. Inspect both origins and paths for a useful shared question; shared hubs or sources are not independent support and receive no relevance bonus. Primary routes and exploration quotas stay unchanged.
 
@@ -57,9 +55,8 @@ The host must check each candidate's work identity, direct sources, factual clai
 
 After verifying the pool, complete the [graph update](knowledge-graph.md#save-verified-relationships-after-research) against that exact candidate file and the batch ID. Save a bounded delta of supported content relationships or a reasoned `no_supported_changes` outcome. Reuse a current unchanged completion. This post-research check applies to new plans in every mode; it is separate from the pre-research hypothesis check.
 
-```sh
-python3 scripts/diversity.py select --root /path/to/curation --batch-id <batch-id> --plan /path/to/weight-plan.json --candidates /path/to/candidates.json --history /path/to/curation/model/recommendations.jsonl --count 5 --seed 1702
-```
+Use `trurl_select(plan_id=..., candidates=...)`.
+
 
 The selector checks the current graph completion against its actual candidate input and returns the compact `graph_update` result for the batch trace. It excludes prior work identities and candidates failing its supplied gates. It uses the retained weights, then considers creator/topic repetition and lane coverage. The minimum weighted score is subjective, not an enjoyment probability. Pure entertainment remains valid without an educational justification.
 
@@ -85,9 +82,8 @@ Compare candidates together instead of repeatedly choosing the most obvious sing
 
 ## Audit what was delivered
 
-```sh
-python3 scripts/diversity.py audit --items /path/to/this-batch.json --previous /path/to/model/recommendations.jsonl
-```
+Use `trurl_select(plan_id=..., candidates=...)`.
+
 
 Retain work-repeat rate, creator concentration, topic coverage, and missing-label counts over comparable windows. Use consistent labels and report incomplete metadata. These are descriptive properties of an observed collection, not measurements of psychological identity or enjoyment.
 

@@ -92,7 +92,7 @@ class SyncEngineTest(unittest.TestCase):
         reference = (self.engine / "references/curators-brief.md").read_text()
         self.assertTrue(reference.startswith(sync.REFERENCE_NOTE))
         self.assertIn("../../skills/trurl/SKILL.md#verify-select-and-present-the-works", reference)
-        self.assertEqual(provenance["transform_version"], 3)
+        self.assertEqual(provenance["transform_version"], 4)
         for name in sync.PUBLIC_FILES:
             if name.startswith("references/") and name.endswith(".md"):
                 self.assertTrue((self.engine / name).read_text().startswith(sync.REFERENCE_NOTE), name)
@@ -116,6 +116,65 @@ class SyncEngineTest(unittest.TestCase):
         self.assertNotIn("SKILL.md", sync.PUBLIC_FILES)
         self.assertNotIn("scripts/location.py", sync.PUBLIC_FILES)
         self.assertEqual(len(sync.PUBLIC_FILES), len(set(sync.PUBLIC_FILES)))
+
+    def test_standalone_commands_become_native_calls_in_both_reference_copies(self):
+        self.shared("references/knowledge-graph.md").write_text(
+            '# Evidence rules\n\nUse `python3 <skill-directory>/scripts/context.py prepare --root <curation-root>`.\n\n'
+            '```sh\npython3 scripts/curation.py graph-update --root /private/model \\\n'
+            '  --delta /private/delta.json --batch-id sample\n'
+            'python3 scripts/curation.py graph-update-check --root /private/model --batch-id sample\n```\n\n'
+            '```json\n{"support_note": "A source establishes a fact, never enjoyment.", "source_provenance": ["s1"]}\n```\n\n'
+            'Keep original anchors separate from content relationships.\n')
+        self.git("add", "skills/trurl/references/knowledge-graph.md")
+        self.commit()
+        sync.sync_engine(self.source, self.engine)
+        for base in (self.engine, self.engine.parent / "skills/trurl"):
+            text = (base / "references/knowledge-graph.md").read_text()
+            self.assertIn('trurl_context(action="prepare")', text)
+            self.assertIn('trurl_graph(action="complete", plan_id=..., candidates=..., review=...', text)
+            self.assertIn('trurl_graph(action="check", plan_id=..., candidates=...)', text)
+            self.assertIn('"support_note": "A source establishes a fact, never enjoyment."', text)
+            self.assertIn("Keep original anchors separate", text)
+            self.assertNotRegex(text, r"python3|scripts/|--root|--delta|```sh")
+        self.assertTrue(sync.check_bundled(self.engine)["valid"])
+
+    def test_unrecognized_standalone_commands_stop_sync_before_writing(self):
+        for command in ('python3 scripts/curation.py new-dangerous-action --root /private/model',
+                        'python3 scripts/future.py run', 'echo do-not-run-this'):
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, "Unrecognized standalone command"):
+                    sync._transform("references/knowledge-graph.md", ('```sh\n' + command + '\n```\n').encode())
+        self.assertFalse(self.engine.exists())
+
+    def test_bundled_check_needs_no_upstream_and_detects_content_or_provenance_drift(self):
+        sync.sync_engine(self.source, self.engine)
+        shutil.rmtree(self.source)
+        before = {str(path): path.read_bytes() for path in self.engine.parent.rglob("*") if path.is_file()}
+        result = sync.check_bundled(self.engine)
+        self.assertTrue(result["valid"])
+        self.assertEqual(result["engine_files"], len(sync.PUBLIC_FILES))
+        self.assertEqual(before, {str(path): path.read_bytes() for path in self.engine.parent.rglob("*") if path.is_file()})
+        cases = [self.engine / "scripts/diversity.py",
+                 self.engine.parent / "skills/trurl/references/knowledge-graph.md"]
+        for path in cases:
+            with self.subTest(path=path):
+                original = path.read_bytes()
+                path.write_bytes(original + b"Drift\n")
+                with self.assertRaisesRegex(ValueError, "differs"):
+                    sync.check_bundled(self.engine)
+                path.write_bytes(original)
+        manifest = self.engine / "SOURCE.json"
+        original = manifest.read_bytes()
+        data = json.loads(original)
+        data["transform_version"] = 3
+        manifest.write_text(json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "adapter version"):
+            sync.check_bundled(self.engine)
+        manifest.write_bytes(original)
+        extra = self.engine / "scripts/unreviewed.py"
+        extra.write_text("raise RuntimeError('Must never execute during checking')\n")
+        with self.assertRaisesRegex(ValueError, "file set differs"):
+            sync.check_bundled(self.engine)
 
     def test_check_and_repeat_sync_are_readonly_when_current(self):
         sync.sync_engine(self.source, self.engine)
@@ -233,6 +292,18 @@ class SyncEngineTest(unittest.TestCase):
 
 class BundledEngineTest(unittest.TestCase):
     """Run the actual vendored dependency graph against disposable synthetic state."""
+
+    def test_bundled_references_show_native_calls_without_standalone_commands(self):
+        for base in (ROOT / "engine", ROOT / "skills/trurl"):
+            for reference in (base / "references").glob("*.md"):
+                text = reference.read_text()
+                self.assertNotRegex(text, r"\bpython(?:3(?:\.\d+)?)?\s+|`[^`\n]*\.py\s+|```(?:sh|bash|shell|console)\b|`--", reference)
+            weekly = (base / "references/weekly-delivery.md").read_text()
+            onboarding = (base / "references/onboarding.md").read_text()
+            self.assertIn("one-off only", weekly)
+            self.assertIn("one-off only", onboarding)
+            self.assertNotIn("no Sundays", weekly)
+        self.assertTrue(sync.check_bundled()["valid"])
 
     def test_references_resolve_within_hermes_plugin(self):
         for reference in (ROOT / "engine/references").glob("*.md"):
