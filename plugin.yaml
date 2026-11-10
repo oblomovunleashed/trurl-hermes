@@ -1,0 +1,16 @@
+name: trurl
+version: "0.3.1"
+description: "Private taste memory, proactive hypotheses, sourced cross-theme discovery, interactive Taste Atlas and Sunday editions."
+author: "Trurl contributors"
+requires_hermes: ">=0.23.0"
+provides_tools:
+  - trurl_context
+  - trurl_taste
+  - trurl_brief
+  - trurl_hypotheses
+  - trurl_plan
+  - trurl_graph
+  - trurl_select
+  - trurl_feedback
+  - trurl_atlas
+  - trurl_schedule

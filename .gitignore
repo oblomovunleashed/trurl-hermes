@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.sqlite3*
+.DS_Store
+model/
+.env
+.env.*
+!.env.example
+taste-atlas.html
+editions/
