@@ -6,7 +6,7 @@
 
 **Your agent, with taste.**
 
-Trurl turns Hermes into a personal curator for books, films, podcasts, videos, lectures and papers. Start with one curiosity or share everything you like. It keeps a private, correctable taste model across sessions and uses actual feedback to refine future picks.
+Trurl turns Hermes into a personal curator for books, films, podcasts, videos, lectures and papers. Start with one curiosity or share everything you like. It keeps a private, correctable taste model across sessions and uses actual feedback to refine future picks. Trurl uses seeded variation to explore different research directions and move beyond the same familiar recommendations. It is designed to counter **mode collapse**—AI’s tendency to converge on predictable answers—by broadening the search before checking each pick against your interests, constraints and reliable sources.
 
 <p align="center">
   <img src="assets/screenshots/03-atlas-interest-map.jpg" alt="Native Taste Atlas showing stated interests and a separate tentative possibility" width="960">
