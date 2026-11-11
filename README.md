@@ -6,7 +6,7 @@
 
 **Your agent, your taste.**
 
-Trurl turns Hermes into a personal curator for books, films, podcasts, videos, lectures and papers. Start with one curiosity or share everything you like. It keeps a private, correctable taste model across sessions and uses actual feedback to refine future picks. Trurl uses seeded variation to explore different research directions and move beyond the same familiar recommendations. It is designed to counter **mode collapse**, agents tendency to converge on predictable answers. It does that by broadening the search before checking each pick against your interests, constraints and reliable sources.
+Trurl turns Hermes into a personal curator for books, films, podcasts, videos, lectures and papers. Start with one curiosity or share everything you like. It keeps a private, correctable taste model across sessions and uses actual feedback to refine future picks. Trurl uses seeded variation to explore different research directions and move beyond the same familiar recommendations. It is designed to counter **mode collapse**, an agent’s tendency to converge on predictable answers. It does that by broadening the search before checking each pick against your interests, constraints and reliable sources.
 
 <p align="center">
   <img src="assets/screenshots/03-atlas-interest-map.jpg" alt="Native Taste Atlas showing stated interests and a separate tentative possibility" width="960">
@@ -35,7 +35,7 @@ hermes plugins enable trurl
 
 The archive contains the `trurl/` runtime directory. Repository screenshots, artwork, tests, maintainer scripts and Git history are excluded.
 
-The tagged **0.3.1** release retains its original source pin, `e6fdae8885770d72247131b76f227520a5645934`, now available in the private [Trurl archive](https://github.com/oblomovunleashed/trurl-archive/commit/e6fdae8885770d72247131b76f227520a5645934). The fresh upstream repository has identical source files with a new history; the current checkout changes engine provenance only.
+The tagged **0.3.1** release is the original snapshot. This checkout includes later documentation and engine-provenance updates, with unchanged engine runtime code. The complete vendored engine and its license are included here; installation needs no access to a separate repository.
 
 To build an install archive from a source checkout, run from the repository root:
 
@@ -151,7 +151,7 @@ See [validation results](VALIDATION.md) for exact scope. Tests use synthetic sta
 
 GitHub Actions runs the tests, bundled integrity checks and both archive builds on Python **3.11, 3.12, 3.13 and 3.14**. Full upstream re-sync verification additionally needs a clean checkout at the recorded commit; CI's bundled check works without access to the private upstream repository.
 
-The repository remains private during preparation. Catalog submission requires this plugin repository to become publicly cloneable at the reviewed commit. Its vendored engine is included here, so users do not need access to the separate Trurl repository.
+Catalog admission requires this public source repository to be pinned to an exact reviewed commit. Installation by catalog name becomes available after maintainer review and merge. Its vendored engine is included here, so users do not need access to the separate Trurl repository.
 
 The maintainer-only sync script invokes local Git and writes deterministic engine/support projections during release preparation. It records the upstream commit and source hashes, performs no download, is not loaded by Hermes and accesses no private taste state. The installed plugin has no self-updater; catalog updates use reviewed SHA-bump PRs and Hermes's native plugin update command.
 

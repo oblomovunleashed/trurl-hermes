@@ -15,4 +15,4 @@
 - Separate the lean install archive from the complete reviewed source archive. Exclude repository artwork, screenshots, tests, maintainer scripts and Git history from manual installations.
 - Add native screenshots made with a synthetic profile, losslessly optimized artwork, Python 3.11–3.14 compatibility guidance and automated regression/package checks.
 
-This is the first tagged release in the standalone Hermes repository. The repository remains private during submission preparation.
+This is the first tagged release in the standalone Hermes repository. Catalog admission remains subject to maintainer review.
